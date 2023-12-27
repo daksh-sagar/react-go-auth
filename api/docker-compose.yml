@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:latest
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: react-go-auth
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: pa55word
+    volumes:
+      - postgres_data_react_go_auth:/var/lib/postgresql/data
+
+volumes:
+  postgres_data_react_go_auth:
+    driver: local
