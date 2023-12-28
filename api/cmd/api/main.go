@@ -24,12 +24,19 @@ type config struct {
 		// maxIdleConns int32 - not supported by pgxpool
 		maxIdleTime time.Duration
 	}
+	auth struct {
+		Secret       string
+		Issuer       string
+		Audience     string
+		CookieDomain string
+	}
 }
 
 type application struct {
 	config config
 	logger *slog.Logger
 	models data.Models
+	auth   Auth
 }
 
 func main() {
@@ -38,6 +45,10 @@ func main() {
 	flag.IntVar(&cfg.port, "port", 4000, "API server port")
 	flag.StringVar(&cfg.env, "env", "development", "App environment (development|staging|production)")
 	flag.StringVar(&cfg.db.dsn, "dsn", "postgres://root:pa55word@localhost:5432/react-go-auth?sslmode=disable", "PostgreSQL DSN")
+	flag.StringVar(&cfg.auth.Secret, "jwt-secret", "supersecret", "JWT signing secret")
+	flag.StringVar(&cfg.auth.Issuer, "jwt-issuer", "example.com", "JWT Issuer")
+	flag.StringVar(&cfg.auth.Audience, "jwt-audience", "example.com", "JWT Audience")
+	flag.StringVar(&cfg.auth.CookieDomain, "cookie-domain", "localhost", "Cookie Domain")
 	flag.IntVar(&cfg.db.maxOpenConns, "db-max-open-conns", 25, "PostgreSQL max open connections")
 	flag.DurationVar(&cfg.db.maxIdleTime, "db-max-idle-time", 15*time.Minute, "PostgreSQL max connection idle time")
 
@@ -59,6 +70,16 @@ func main() {
 		config: cfg,
 		logger: logger,
 		models: data.NewModels(db),
+		auth: Auth{
+			Secret:        cfg.auth.Secret,
+			Issuer:        cfg.auth.Issuer,
+			Audience:      cfg.auth.Audience,
+			CookieDomain:  cfg.auth.CookieDomain,
+			TokenExpiry:   time.Minute * 15,
+			RefreshExpiry: time.Hour * 24,
+			CookiePath:    "/",
+			CookieName:    "refreshToken",
+		},
 	}
 
 	srv := &http.Server{

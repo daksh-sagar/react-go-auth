@@ -13,6 +13,8 @@ func (app *application) routes() *httprouter.Router {
 	router.NotFound = http.HandlerFunc(app.notFoundResponse)
 
 	router.HandlerFunc(http.MethodGet, "/v1/healthcheck", app.healthcheckHandler)
+	router.HandlerFunc(http.MethodPost, "/v1/authenticate", app.authenticate)
+	router.HandlerFunc(http.MethodGet, "/v1/refreshToken", app.authenticate)
 
 	return router
 

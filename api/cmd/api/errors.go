@@ -28,6 +28,10 @@ func (app *application) badRequestError(w http.ResponseWriter, r *http.Request, 
 	app.errorResponse(w, r, http.StatusBadRequest, err.Error())
 }
 
+func (app *application) unauthorizedError(w http.ResponseWriter, r *http.Request) {
+	app.errorResponse(w, r, http.StatusUnauthorized, "unauthorized")
+}
+
 func (app *application) serverErrorResponse(w http.ResponseWriter, r *http.Request, err error) {
 	app.logError(r, err)
 
