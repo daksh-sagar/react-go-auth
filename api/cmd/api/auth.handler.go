@@ -1,6 +1,8 @@
 package main
 
 import (
+	"errors"
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -52,6 +54,8 @@ func (app *application) authenticate(w http.ResponseWriter, r *http.Request) {
 	refreshCookie := app.auth.GetRefreshCookie(tokens.RefreshToken)
 	http.SetCookie(w, refreshCookie)
 
+	fmt.Println(w.Header()["Set-Cookie"])
+
 	app.writeJSON(w, http.StatusAccepted, envelope{"tokens": tokens}, nil)
 }
 
@@ -70,6 +74,11 @@ func (app *application) refreshToken(w http.ResponseWriter, r *http.Request) {
 			}
 
 			userId, err := strconv.ParseInt(claims.Subject, 10, 64)
+
+			if err != nil {
+				app.serverErrorResponse(w, r, err)
+				return
+			}
 
 			user, err := app.models.Users.GetUserById(userId)
 
@@ -92,9 +101,13 @@ func (app *application) refreshToken(w http.ResponseWriter, r *http.Request) {
 
 			http.SetCookie(w, app.auth.GetRefreshCookie(tokenPairs.RefreshToken))
 			app.writeJSON(w, http.StatusAccepted, envelope{"tokens": tokenPairs}, nil)
+			return
 		}
 
 	}
+
+	app.badRequestError(w, r, errors.New("missing refresh token"))
+
 }
 
 func (app *application) logout(w http.ResponseWriter, r *http.Request) {

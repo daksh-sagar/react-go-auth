@@ -78,7 +78,7 @@ func main() {
 			TokenExpiry:   time.Minute * 15,
 			RefreshExpiry: time.Hour * 24,
 			CookiePath:    "/",
-			CookieName:    "refreshToken",
+			CookieName:    "Refresh-Token",
 		},
 	}
 

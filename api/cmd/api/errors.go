@@ -32,6 +32,13 @@ func (app *application) unauthorizedError(w http.ResponseWriter, r *http.Request
 	app.errorResponse(w, r, http.StatusUnauthorized, "unauthorized")
 }
 
+func (app *application) invalidAuthenticationTokenResponse(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("WWW-Authenticate", "Bearer")
+
+	message := "invalid or missing authentication token"
+	app.errorResponse(w, r, http.StatusUnauthorized, message)
+}
+
 func (app *application) serverErrorResponse(w http.ResponseWriter, r *http.Request, err error) {
 	app.logError(r, err)
 
