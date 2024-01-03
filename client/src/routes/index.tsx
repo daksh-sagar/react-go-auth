@@ -1,9 +1,10 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ProtectedRoute } from "./ProtectedRoute";
-import { LoginForm } from "../components/Login";
-import { SignupForm } from "../components/Singup";
-import { Home } from "../components/Home";
+import { LoginForm } from "../pages/Login";
+import { SignupForm } from "../pages/Singup";
+import { Home } from "../pages/Home";
 import { useAuth } from "../contexts/useAuthContext";
+import { Protected } from "../pages/Protected";
 
 export function Router() {
   const {loading} = useAuth()
@@ -14,9 +15,10 @@ export function Router() {
       <Routes>
         <Route path="/login" element={<LoginForm />} />
         <Route path="/signup" element={<SignupForm />} />
+        <Route path="/" element={<Home />} />
   
         <Route element={<ProtectedRoute />}>
-          <Route path="/" element={<Home />} />
+          <Route path="/protected" element={<Protected />} />
         </Route>
       </Routes>
     </BrowserRouter>

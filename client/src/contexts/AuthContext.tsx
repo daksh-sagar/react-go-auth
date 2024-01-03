@@ -27,12 +27,11 @@ export function AuthProvider({ children }: {children: React.ReactNode}){
   
         const {accessToken} = res.data.tokens
         setToken(accessToken)
-        setLoading(false)
-        console.log({accessToken})
       } catch (error) {
         console.error({error})
         console.log('refresh token not found in cookies')
         setToken('')
+      } finally {
         setLoading(false)
       }
     })()
